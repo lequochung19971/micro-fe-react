@@ -1,0 +1,29 @@
+{
+  "name": "vite-micro-fe",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "pnpm --stream -r run dev",
+    "dev:product": "pnpm run --filter product dev",
+    "dev:car": "pnpm run --filter car dev",
+    "dev:root-app": "pnpm run --filter root-app dev",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "pnpm --stream -r run start",
+    "start:product": "pnpm run --filter product start ",
+    "start:host": "pnpm run --filter host start"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/material": "^5.14.19"
+  },
+  "dependencies": {
+    "@mui/icons-material": "^5.14.19",
+    "react-router-dom": "^6.20.1",
+    "uuid": "^9.0.1"
+  }
+}
