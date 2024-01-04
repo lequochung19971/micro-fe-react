@@ -10,6 +10,7 @@
     "dev:root-app": "pnpm run --filter root-app dev",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "pnpm --stream -r run start",
+    "start:live": "pnpm --stream -r run start:live",
     "start:product": "pnpm run --filter product start ",
     "start:host": "pnpm run --filter host start"
   },

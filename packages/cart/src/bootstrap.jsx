@@ -14,6 +14,7 @@ const mount = ({ mountPoint, routingStrategy, initialPathname, router: hostRoute
     strategy: routingStrategy,
     initialPathname,
   });
+
   const root = ReactDOM.createRoot(mountPoint);
 
   root.render(
