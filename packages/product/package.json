@@ -5,7 +5,7 @@
   "scripts": {
     "build": "webpack --mode production --config ./webpack/webpack.config.prod.js",
     "serve": "cd dist && PORT=3001 npx serve -s",
-    "dev": "webpack serve --mode development --live-reload --hot --config ./webpack/webpack.config.dev.js"
+    "dev": "NODE_ENV=development webpack serve --mode development --live-reload --hot --config ./webpack/webpack.config.dev.js"
   },
   "devDependencies": {
     "@babel/core": "7.21.4",
