@@ -14,7 +14,7 @@ export const routes = [
     children: [
       {
         index: true,
-        element: <div>Carts Page</div>,
+        element: <div>Carts Page Test</div>,
       },
       {
         path: ':id',
