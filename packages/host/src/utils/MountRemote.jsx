@@ -1,8 +1,8 @@
 import { useRef, useMemo, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { remoteConfigs } from '../remoteConfigs';
 import { useState } from 'react';
+import { remoteConfigs } from '../remoteConfigs';
 
 const loadModule = async (scope, module) => {
   // Initializes the share scope. This fills it with known provided modules from this build and all remotes

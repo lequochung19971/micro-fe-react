@@ -6,13 +6,11 @@
   "scripts": {
     "dev": "pnpm --stream -r run dev",
     "dev:product": "pnpm run --filter product dev",
-    "dev:car": "pnpm run --filter car dev",
-    "dev:root-app": "pnpm run --filter root-app dev",
+    "dev:cart": "pnpm run --filter cart dev",
+    "dev:host": "pnpm run --filter host dev",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "pnpm --stream -r run start",
-    "start:live": "pnpm --stream -r run start:live",
-    "start:product": "pnpm run --filter product start ",
-    "start:host": "pnpm run --filter host start"
+    "build": "pnpm --stream -r run build",
+    "serve": "pnpm --stream -r run serve"
   },
   "keywords": [],
   "author": "",

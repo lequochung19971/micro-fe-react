@@ -44,6 +44,7 @@ export const navigations = [
 ];
 
 function App() {
+  console.log('App');
   return <RouterProvider router={router} />;
 }
 
