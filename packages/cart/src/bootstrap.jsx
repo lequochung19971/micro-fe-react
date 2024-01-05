@@ -2,13 +2,21 @@
 // eslint-disable-next-line no-unused-vars
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { RouterProvider } from 'react-router-dom';
 import { routes } from './routes';
-import { createRouter } from 'shared/utils';
+import { createRouter } from 'shared/utils/createRouter';
 import { HostInfoContext } from 'shared/components';
+import App from './App';
+import { remoteNameConfig } from 'shared/configs';
+import { EventEmitterContext } from 'shared/utils/eventEmitter';
 
-const mount = ({ mountPoint, routingStrategy, initialPathname, router: hostRouterInfo = {} }) => {
-  console.log('Mounting cart');
+const mount = ({
+  mountPoint,
+  routingStrategy,
+  initialPathname,
+  router: hostRouterInfo = {},
+  eventEmitter,
+}) => {
+  console.log(`${remoteNameConfig.cart} mounting`);
   const router = createRouter({
     routes,
     strategy: routingStrategy,
@@ -23,7 +31,9 @@ const mount = ({ mountPoint, routingStrategy, initialPathname, router: hostRoute
         value={{
           router: hostRouterInfo,
         }}>
-        <RouterProvider router={router} />
+        <EventEmitterContext.Provider value={eventEmitter}>
+          <App router={router} />
+        </EventEmitterContext.Provider>
       </HostInfoContext.Provider>
     </React.StrictMode>
   );

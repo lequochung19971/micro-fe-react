@@ -15,7 +15,7 @@ const Header = () => {
               alignItems: 'center',
               width: '100%',
             }}>
-            <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+            <Box sx={{ flexGrow: 1, display: 'flex' }}>
               {navigations.map((navigation) => (
                 <Button
                   key={navigation.name}

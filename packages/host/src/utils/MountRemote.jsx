@@ -1,8 +1,10 @@
-import { useRef, useMemo, useEffect, useCallback } from 'react';
+import { useRef, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { remoteConfigs } from '../remoteConfigs';
+import { eventEmitter } from '../App';
+import { useEventEmitter, useEventEmitterContext } from 'shared/utils/eventEmitter';
 
 const loadModule = async (scope, module) => {
   // Initializes the share scope. This fills it with known provided modules from this build and all remotes
@@ -64,7 +66,7 @@ const useDynamicScript = (url) => {
   };
 };
 
-const useSyncRoute = ({ remoteName, isRemoteMounted }) => {
+const useSyncRoute = ({ remoteName }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -72,81 +74,117 @@ const useSyncRoute = ({ remoteName, isRemoteMounted }) => {
   const remoteConfig = useMemo(() => remoteConfigs[remoteName], [remoteName]);
   const { pathname: remoteBasePathname } = remoteConfig;
   const hostConfig = useMemo(() => remoteConfigs.host, []);
+  const eventEmitter = useEventEmitterContext();
 
   // Listen to navigation events dispatched inside app1 mfe.
-  useEffect(() => {
-    const handleNavigated = (event) => {
-      const remotePathname = event.detail;
-      const newPathname =
-        remotePathname === '/' ? remoteBasePathname : `${remoteBasePathname}${remotePathname}`;
+  // useEffect(() => {
+  //   const handleNavigated = (event) => {
+  //     const remotePathname = event.detail;
+  //     const newPathname =
+  //       remotePathname === '/' ? remoteBasePathname : `${remoteBasePathname}${remotePathname}`;
 
-      if (newPathname === location.pathname) {
-        return;
-      }
+  //     if (newPathname === location.pathname) {
+  //       return;
+  //     }
 
-      navigate(newPathname, {
-        state: location.state,
-      });
-    };
-    window.addEventListener(`${remoteName}.navigated`, handleNavigated);
+  //     navigate(newPathname, {
+  //       state: location.state,
+  //     });
+  //   };
+  //   window.addEventListener(`${remoteName}.navigated`, handleNavigated);
 
-    return () => {
-      window.removeEventListener(`${remoteName}.navigated`, handleNavigated);
-    };
-  }, [location, navigate, remoteBasePathname, remoteName]);
+  //   return () => {
+  //     window.removeEventListener(`${remoteName}.navigated`, handleNavigated);
+  //   };
+  // }, [location, navigate, remoteBasePathname, remoteName]);
+  useEventEmitter(`${remoteName}.navigated`, ({ value }) => {
+    const remotePathname = value;
+    const newPathname =
+      remotePathname === '/' ? remoteBasePathname : `${remoteBasePathname}${remotePathname}`;
+
+    if (newPathname === location.pathname) {
+      return;
+    }
+
+    navigate(newPathname, {
+      state: location.state,
+    });
+  });
 
   // Listen for host location changes and dispatch a notification.
   useEffect(() => {
     if (location.pathname.startsWith(remoteBasePathname)) {
-      window.dispatchEvent(
-        new CustomEvent(`${hostConfig.name}.navigated`, {
-          detail: location.pathname.replace(remoteBasePathname, ''),
-        })
+      eventEmitter.emit(
+        `${hostConfig.name}.navigated`,
+        location.pathname.replace(remoteBasePathname, '')
       );
+      // window.dispatchEvent(
+      //   new CustomEvent(`${hostConfig.name}.navigated`, {
+      //     detail: location.pathname.replace(remoteBasePathname, ''),
+      //   })
+      // );
     }
     /**
      * `isRemoteMounted`
      * If the remote is mounted, host will re-dispatch an event to sync route context for remote at initial
      */
-  }, [hostConfig.name, location, remoteBasePathname, isRemoteMounted]);
+  }, [eventEmitter, hostConfig.name, location.pathname, remoteBasePathname]);
 
   const parsedSearchParams = useMemo(() => {
     return Object.fromEntries([...searchParams]);
   }, [searchParams]);
 
-  useEffect(() => {
-    const handlerSearchParams = (event) => {
-      const params = event.detail;
-      if (!parsedSearchParams || !params) return;
+  // useEffect(() => {
+  //   const handlerSearchParams = (event) => {
+  //     const params = event.detail;
+  //     if (!parsedSearchParams || !params) return;
 
-      if (JSON.stringify(parsedSearchParams) === JSON.stringify(params)) {
-        return;
-      }
-      setSearchParams(params);
-    };
-    window.addEventListener(`${remoteName}.searchParams`, handlerSearchParams);
+  //     if (JSON.stringify(parsedSearchParams) === JSON.stringify(params)) {
+  //       return;
+  //     }
+  //     setSearchParams(params);
+  //   };
+  //   window.addEventListener(`${remoteName}.searchParams`, handlerSearchParams);
 
-    return () => {
-      window.removeEventListener(`${remoteName}.searchParams`, handlerSearchParams);
-    };
-  }, [location, parsedSearchParams, remoteName, setSearchParams]);
+  //   return () => {
+  //     window.removeEventListener(`${remoteName}.searchParams`, handlerSearchParams);
+  //   };
+  // }, [location, parsedSearchParams, remoteName, setSearchParams]);
+
+  useEventEmitter(`${remoteName}.searchParams`, ({ value }) => {
+    const params = value;
+    if (!parsedSearchParams || !params) return;
+
+    if (JSON.stringify(parsedSearchParams) === JSON.stringify(params)) {
+      return;
+    }
+    setSearchParams(params);
+  });
 
   // Listen for host location changes and dispatch a notification.
   useEffect(() => {
     if (!location.search) return;
 
     if (location.pathname.startsWith(remoteBasePathname)) {
-      window.dispatchEvent(
-        new CustomEvent(`${hostConfig.name}.searchParams`, {
-          detail: parsedSearchParams,
-        })
-      );
+      eventEmitter.emit(`${hostConfig.name}.searchParams`, parsedSearchParams);
+      // window.dispatchEvent(
+      //   new CustomEvent(`${hostConfig.name}.searchParams`, {
+      //     detail: parsedSearchParams,
+      //   })
+      // );
     }
     /**
      * `isRemoteMounted`
      * If the remote is mounted, host will re-dispatch an event to sync route context for remote at initial
      */
-  }, [hostConfig.name, location, parsedSearchParams, remoteBasePathname, isRemoteMounted]);
+  }, [
+    eventEmitter,
+    hostConfig.name,
+    location.pathname,
+    location.search,
+    parsedSearchParams,
+    remoteBasePathname,
+  ]);
 
   return {
     location,
@@ -190,10 +228,10 @@ const MountRemote = ({ remoteName, module }) => {
         if (!mount) {
           throw Error('Do not have mount function');
         }
-
         remoteRef.current = mount({
           mountPoint: mountPointRef.current,
           initialPathname,
+          eventEmitter,
           router: {
             location,
             searchParams,

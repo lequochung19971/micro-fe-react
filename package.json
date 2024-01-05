@@ -15,13 +15,11 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "devDependencies": {
+  "dependencies": {
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-    "@mui/material": "^5.14.19"
-  },
-  "dependencies": {
     "@mui/icons-material": "^5.14.19",
+    "@mui/material": "^5.14.19",
     "react-router-dom": "^6.20.1",
     "uuid": "^9.0.1"
   }
