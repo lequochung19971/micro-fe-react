@@ -7,9 +7,9 @@ const DotenvWebpack = require('dotenv-webpack');
 const dotenv = require('dotenv');
 
 const envPath = process.env.NODE_ENV ? `.env.${process.env.NODE_ENV}` : '.env';
-// dotenv.config({
-//   path: envPath,
-// });
+dotenv.config({
+  path: envPath,
+});
 
 const paths = require('./paths');
 const deps = require('../package.json').dependencies;
