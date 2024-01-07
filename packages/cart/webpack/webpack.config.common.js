@@ -55,7 +55,7 @@ module.exports = {
   plugins: [
     // .env
     new DotenvWebpack({
-      path: envPath,
+      path: process.env.NODE_ENV ? `.env.${process.env.NODE_ENV}` : '.env',
     }),
     // Removes/cleans build folders and unused assets when rebuilding
     new CleanWebpackPlugin(),
