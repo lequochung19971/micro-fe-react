@@ -9,13 +9,10 @@ import App from './App';
 import { remoteNameConfig } from 'shared/configs';
 import { EventEmitterContext } from 'shared/utils/eventEmitter';
 
-const mount = ({
-  mountPoint,
-  routingStrategy,
-  initialPathname,
-  router: hostRouterInfo = {},
-  eventEmitter,
-}) => {
+const mount = (
+  element,
+  { routingStrategy, initialPathname, router: hostRouterInfo = {}, eventEmitter }
+) => {
   console.log(`${remoteNameConfig.cart} mounting`);
   const router = createRouter({
     routes,
@@ -23,7 +20,7 @@ const mount = ({
     initialPathname,
   });
 
-  const root = ReactDOM.createRoot(mountPoint);
+  const root = ReactDOM.createRoot(element);
 
   root.render(
     <React.StrictMode>
@@ -40,4 +37,5 @@ const mount = ({
 
   return root;
 };
+
 export default mount;

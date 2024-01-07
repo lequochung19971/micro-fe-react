@@ -3,7 +3,13 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
-const Dotenv = require('dotenv-webpack');
+const dotenv = require('dotenv');
+const DotenvWebpack = require('dotenv-webpack');
+
+const envPath = process.env.NODE_ENV ? `.env.${process.env.NODE_ENV}` : '.env';
+dotenv.config({
+  path: envPath,
+});
 
 const paths = require('./paths');
 const deps = require('../package.json').dependencies;
@@ -48,8 +54,8 @@ module.exports = {
 
   plugins: [
     // .env
-    new Dotenv({
-      path: process.env.NODE_ENV ? `.env.${process.env.NODE_ENV}` : '.env',
+    new DotenvWebpack({
+      path: envPath,
     }),
     // Removes/cleans build folders and unused assets when rebuilding
     new CleanWebpackPlugin(),
@@ -81,6 +87,7 @@ module.exports = {
       remotes: {},
       exposes: {
         './bootstrap': './src/bootstrap',
+        './ShoppingCart': './src/components/ShoppingCart',
       },
       shared: {
         ...rootDeps,

@@ -1,7 +1,7 @@
 import { createBrowserRouter, createMemoryRouter } from 'react-router-dom';
 
 export function createRouter({ routes, strategy, initialPathname }) {
-  if (strategy === 'browser') {
+  if (strategy === 'standalone') {
     return createBrowserRouter(routes);
   }
 

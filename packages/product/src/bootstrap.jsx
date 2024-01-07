@@ -9,16 +9,13 @@ import App from './App';
 import { remoteNameConfig } from 'shared/configs';
 import { EventEmitterContext } from 'shared/utils/eventEmitter';
 
-const mount = ({
-  mountPoint,
-  initialPathname,
-  routingStrategy,
-  router: hostRouterInfo = {},
-  eventEmitter,
-}) => {
+const mount = (
+  element,
+  { initialPathname, routingStrategy, router: hostRouterInfo = {}, eventEmitter }
+) => {
   console.log(`${remoteNameConfig.product} mounting`);
   const router = createRouter({ routes, strategy: routingStrategy, initialPathname });
-  const root = ReactDOM.createRoot(mountPoint);
+  const root = ReactDOM.createRoot(element);
 
   root.render(
     <React.StrictMode>

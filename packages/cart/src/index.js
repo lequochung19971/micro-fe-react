@@ -4,7 +4,7 @@ import('./bootstrap').then((module) => {
 
   mount({
     mountPoint: localRoot,
-    routingStrategy: 'browser',
+    routingStrategy: 'standalone',
   });
 });
 

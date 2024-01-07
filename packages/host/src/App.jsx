@@ -1,5 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom';
 import Layout from './Layout';
+import './App.css';
 
 import { RouterProvider } from 'react-router-dom';
 import { Suspense, lazy } from 'react';
@@ -38,6 +39,10 @@ const router = createBrowserRouter([
 ]);
 
 export const navigations = [
+  {
+    path: '',
+    name: 'Home',
+  },
   {
     path: 'products',
     name: 'Product',

@@ -1,2 +1,2 @@
 export * from './HostInfoContext';
-export * from './NavigationManager';
+export * from './RouterManager';

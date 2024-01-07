@@ -3,15 +3,15 @@ import React from 'react';
 import { Outlet } from 'react-router-dom';
 import ProductsPage from './pages/ProductsPage';
 import ProductPage from './pages/ProductPage';
-import { Navigation } from './components/Navigation';
+import { AppRouterManager } from './components/AppRouterManager';
 
 export const routes = [
   {
     path: '/',
     element: (
-      <Navigation remoteName="product">
+      <AppRouterManager>
         <Outlet />
-      </Navigation>
+      </AppRouterManager>
     ),
     children: [
       {

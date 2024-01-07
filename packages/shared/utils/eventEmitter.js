@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext } from 'react';
+import { createContext, useCallback, useContext, useMemo } from 'react';
 
 import { useEffect, useRef } from 'react';
 
@@ -6,17 +6,19 @@ export const createEventEmitter = () => {
   const events = {};
   let listeners = [];
 
-  const on = (eventName, handler) => {
-    let currentListener = listeners.find((l) => l.eventName === eventName && l.handler === handler);
+  const on = (eventName, key, handler) => {
+    let currentListener = listeners.find((l) => l.eventName === eventName && l.key === key);
 
     if (!currentListener) {
       currentListener = {
         eventName,
         handler,
         initialized: false,
+        key,
       };
       listeners.push(currentListener);
     }
+    currentListener.handler = handler;
 
     const initializationEventName = `${eventName}.initialization`;
     const updateEventName = `${eventName}.update`;
@@ -53,14 +55,22 @@ export const createEventEmitter = () => {
       );
     }
 
-    return () => {
+    console.log('Event Emitter - on - events', events);
+    console.log('Event Emitter - on - events', listeners);
+
+    return (isRemoveListenerInstance) => {
       window.removeEventListener(initializationEventName, handleInitialize);
       window.removeEventListener(updateEventName, handleUpdate);
-      listeners = listeners.filter((l) => l.handler !== handler);
+
+      if (isRemoveListenerInstance) {
+        listeners = listeners.filter((l) => l.key !== key);
+      }
     };
   };
 
   const emit = (eventName, value) => {
+    console.log('Event Emitter - on - emit', eventName, value);
+
     events[eventName] ??= {
       name: eventName,
       value,
@@ -103,37 +113,46 @@ export const createEventEmitter = () => {
 
 export const EventEmitterContext = createContext();
 
-export const useEventEmitterContext = () => {
+export const useEventEmitter = () => {
   const emitter = useContext(EventEmitterContext);
 
   useEffect(() => {
     if (!emitter) {
       console.warn('eventEmitter is not existed');
     }
-  });
+  }, [emitter]);
 
-  const on = useCallback((...args) => emitter?.on?.(args), [emitter]);
-  const emit = useCallback((...args) => emitter?.emit?.(args), [emitter]);
+  const on = useCallback((...args) => emitter?.on?.(...args), [emitter]);
+  const emit = useCallback((...args) => emitter?.emit?.(...args), [emitter]);
 
-  return {
-    ...(emitter ?? {}),
-    on,
-    emit,
-  };
+  return useMemo(
+    () => ({
+      ...(emitter ?? {}),
+      on,
+      emit,
+    }),
+    [emit, emitter, on]
+  );
 };
-export const useEventEmitter = (eventName, handler) => {
-  const eventEmitter = useEventEmitterContext();
-  const savedHandler = useRef(handler);
-
-  savedHandler.current = handler;
+export const useListenEvent = (eventName, handler) => {
+  const eventEmitter = useEventEmitter();
+  const key = useRef(Symbol());
+  const savedUnbindFn = useRef();
 
   useEffect(() => {
     if (!eventEmitter.on) return;
-
-    const unbind = eventEmitter.on(eventName, savedHandler.current);
+    savedUnbindFn.current = eventEmitter.on(eventName, key.current, handler);
 
     return () => {
-      unbind?.();
+      savedUnbindFn.current?.();
     };
-  }, [eventEmitter, eventName]);
+  }, [eventEmitter, eventName, handler]);
+
+  // Unmount
+  useEffect(
+    () => () => {
+      savedUnbindFn.current?.(true);
+    },
+    []
+  );
 };

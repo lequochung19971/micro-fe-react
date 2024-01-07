@@ -1,5 +1,5 @@
-import MountRemote from '../utils/MountRemote';
+import { MountRemoteApp } from './MountRemote';
 
 export default function CartApp() {
-  return <MountRemote key="cart" remoteName="cart" module="./bootstrap" />;
+  return <MountRemoteApp key="cart" remoteName="cart" module="./bootstrap" />;
 }

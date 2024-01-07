@@ -1,6 +1,8 @@
-import { AppBar, Box, Button, Container, Toolbar } from '@mui/material';
+import { AppBar, Box, Button, Container, Skeleton, Toolbar } from '@mui/material';
 import { navigations } from './App';
 import { useNavigate } from 'react-router-dom';
+import { MountRemoteComponent } from './components/MountRemote';
+import { remoteNameConfig } from 'shared/configs';
 
 const Header = () => {
   const navigate = useNavigate();
@@ -29,10 +31,14 @@ const Header = () => {
             <Button variant="outlined" color="secondary" sx={{ fontWeight: 'bold' }}>
               Login
             </Button>
-            <Box
-              sx={{
-                marginLeft: '8px',
-              }}></Box>
+
+            <MountRemoteComponent
+              remoteName={remoteNameConfig.cart}
+              module="./ShoppingCart"
+              loadingElement={
+                <Skeleton width={34} height={34} variant="circular" sx={{ marginLeft: '8px' }} />
+              }
+            />
           </Box>
         </Toolbar>
       </Container>

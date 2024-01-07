@@ -1,15 +1,15 @@
 // eslint-disable-next-line no-unused-vars
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-import { Navigation } from './components/Navigation';
+import { AppRouterManager } from './components/AppRouterManager';
 
 export const routes = [
   {
     path: '/',
     element: (
-      <Navigation remoteName="cart">
+      <AppRouterManager>
         <Outlet />
-      </Navigation>
+      </AppRouterManager>
     ),
     children: [
       {
