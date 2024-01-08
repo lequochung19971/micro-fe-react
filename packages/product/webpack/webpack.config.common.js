@@ -3,6 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
+const path = require('path');
 const DotenvWebpack = require('dotenv-webpack');
 const dotenv = require('dotenv');
 const envPath = process.env.NODE_ENV ? `.env.${process.env.NODE_ENV}` : '.env';
@@ -56,7 +57,12 @@ module.exports = {
   plugins: [
     //.env
     new DotenvWebpack({
-      path: process.env.NODE_ENV ? `.env.${process.env.NODE_ENV}` : '.env',
+      path: path.join(__dirname, envPath),
+      safe: true, // load '.env.example' to verify the '.env' variables are all set. Can also be a string to a different file.
+      allowEmptyValues: true, // allow empty variables (e.g. `FOO=`) (treat it as empty string, rather than missing)
+      systemvars: true, // load all the predefined 'process.env' variables which will trump anything local per dotenv specs.
+      silent: true, // hide any errors
+      defaults: false, // load '.env.defaults' as the default values if empty.
     }),
     // Removes/cleans build folders and unused assets when rebuilding
     new CleanWebpackPlugin(),
