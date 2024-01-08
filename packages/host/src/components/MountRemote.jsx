@@ -6,8 +6,6 @@ import { remoteConfigs } from '../remoteConfigs';
 import { eventEmitter } from '../App';
 import { useListenEvent, useEventEmitter } from 'shared/utils/eventEmitter';
 
-console.log('remoteConfigs', remoteConfigs);
-
 const loadModule = async (scope, module) => {
   // Initializes the share scope. This fills it with known provided modules from this build and all remotes
   // eslint-disable-next-line no-undef

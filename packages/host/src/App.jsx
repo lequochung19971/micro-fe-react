@@ -22,7 +22,7 @@ const router = createBrowserRouter([
         path: '/products/*',
         element: (
           <Suspense>
-            <ProductApp remoteName="product" module="./bootstrap" />
+            <ProductApp module="./bootstrap" />
           </Suspense>
         ),
       },
@@ -30,7 +30,7 @@ const router = createBrowserRouter([
         path: '/carts/*',
         element: (
           <Suspense>
-            <CartApp remoteName="cart" module="./bootstrap" />
+            <CartApp module="./bootstrap" />
           </Suspense>
         ),
       },

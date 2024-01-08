@@ -5,8 +5,6 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 
-console.log('ENV', process.env);
-
 module.exports = merge(common, {
   mode: 'production',
   devtool: false,
@@ -45,9 +43,14 @@ module.exports = merge(common, {
     // Once your build outputs multiple chunks, this option will ensure they share the webpack runtime
     // instead of having their own. This also helps with long-term caching, since the chunks will only
     // change when actual code changes, not the webpack runtime.
-    runtimeChunk: {
-      name: 'runtime',
-    },
+
+    /**
+     * The reason to disable runtimeChunk for remote
+     * @link https://stackoverflow.com/questions/74024405/webpack-module-federation-loads-chunks-from-wrong-url
+     */
+    // runtimeChunk: {
+    //   name: 'runtime',
+    // },
   },
   performance: {
     hints: false,

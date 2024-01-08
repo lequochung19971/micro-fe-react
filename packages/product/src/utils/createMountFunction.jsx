@@ -4,7 +4,7 @@ import { HostInfoContext } from 'shared/components';
 import { EventEmitterContext } from 'shared/utils/eventEmitter';
 
 export const createMountFunction = (Component) => {
-  return function mount({ mountPoint, router: hostRouterInfo = {}, eventEmitter }) {
+  return function mount(mountPoint, { router: hostRouterInfo = {}, eventEmitter }) {
     const root = ReactDOM.createRoot(mountPoint);
 
     root.render(

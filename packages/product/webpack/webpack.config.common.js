@@ -3,6 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
+const webpack = require('webpack');
 const path = require('path');
 const DotenvWebpack = require('dotenv-webpack');
 const dotenv = require('dotenv');
@@ -51,18 +52,26 @@ module.exports = {
           loader: 'babel-loader',
         },
       },
+      {
+        test: /\.(woff(2)?|eot|ttf|otf|svg|)$/,
+        type: 'asset', // <-- Assets module - asset
+        parser: {
+          dataUrlCondition: {
+            maxSize: 8 * 1024, // 8kb
+          },
+        },
+        generator: {
+          //If emitting file, the file path is
+          filename: 'assets/fonts/[hash][ext][query]',
+        },
+      },
     ],
   },
 
   plugins: [
     //.env
-    new DotenvWebpack({
-      path: path.join(__dirname, envPath),
-      safe: true, // load '.env.example' to verify the '.env' variables are all set. Can also be a string to a different file.
-      allowEmptyValues: true, // allow empty variables (e.g. `FOO=`) (treat it as empty string, rather than missing)
-      systemvars: true, // load all the predefined 'process.env' variables which will trump anything local per dotenv specs.
-      silent: true, // hide any errors
-      defaults: false, // load '.env.defaults' as the default values if empty.
+    new webpack.DefinePlugin({
+      'process.env': JSON.stringify(process.env),
     }),
     // Removes/cleans build folders and unused assets when rebuilding
     new CleanWebpackPlugin(),

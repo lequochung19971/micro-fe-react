@@ -5,7 +5,7 @@ export const remoteConfigs = Object.freeze({
     name: remoteNameConfig.host,
   },
   product: {
-    name: remoteNameConfig.cart,
+    name: remoteNameConfig.product,
     url: `${process.env.PRODUCT_DOMAIN}remoteEntry.js`,
     scope: 'product',
     pathname: '/products',
