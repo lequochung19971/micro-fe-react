@@ -16,4 +16,10 @@ export const remoteConfigs = Object.freeze({
     scope: 'cart',
     pathname: '/carts',
   },
+  auth: {
+    name: remoteNameConfig.auth,
+    url: `${process.env.AUTH_DOMAIN}remoteEntry.js`,
+    scope: 'auth',
+    pathname: '/auth',
+  },
 });

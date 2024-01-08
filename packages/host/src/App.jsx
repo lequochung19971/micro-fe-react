@@ -10,6 +10,7 @@ import { EventEmitterContext, createEventEmitter } from 'shared/utils/eventEmitt
 
 const ProductApp = lazy(() => import('./components/ProductApp'));
 const CartApp = lazy(() => import('./components/CartApp'));
+const AuthApp = lazy(() => import('./components/AuthApp'));
 
 export const eventEmitter = createEventEmitter();
 
@@ -22,7 +23,7 @@ const router = createBrowserRouter([
         path: '/products/*',
         element: (
           <Suspense>
-            <ProductApp module="./bootstrap" />
+            <ProductApp />
           </Suspense>
         ),
       },
@@ -30,7 +31,15 @@ const router = createBrowserRouter([
         path: '/carts/*',
         element: (
           <Suspense>
-            <CartApp module="./bootstrap" />
+            <CartApp />
+          </Suspense>
+        ),
+      },
+      {
+        path: '/auth/*',
+        element: (
+          <Suspense>
+            <AuthApp />
           </Suspense>
         ),
       },

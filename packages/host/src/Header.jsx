@@ -28,9 +28,15 @@ const Header = () => {
               ))}
             </Box>
 
-            <Button variant="outlined" color="secondary" sx={{ fontWeight: 'bold' }}>
+            {/* <Button variant="outlined" color="secondary" sx={{ fontWeight: 'bold' }}>
               Login
-            </Button>
+            </Button> */}
+
+            <MountRemoteComponent
+              remoteName={remoteNameConfig.auth}
+              module="./LoginButton"
+              loadingElement={<Skeleton width={75} height={36} variant="rectangular" />}
+            />
 
             <MountRemoteComponent
               remoteName={remoteNameConfig.cart}

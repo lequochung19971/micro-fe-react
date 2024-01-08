@@ -20,7 +20,6 @@ const loadModule = async (scope, module) => {
 
 const urlCache = new Set();
 const useDynamicScript = (url) => {
-  console.log('urlCache', urlCache);
   const [ready, setReady] = useState(false);
   const [isError, setIsError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -86,21 +85,6 @@ const useSyncRoute = ({ remoteName }) => {
     return Object.fromEntries([...searchParams]);
   }, [searchParams]);
 
-  /**
-   * Listen navigate action from any remotes
-   */
-  useListenEvent('common.router.navigate', ({ value = {} }) => {
-    const { to, options } = value;
-    navigate(to, options);
-  });
-
-  /**
-   * Listen searchParams action from any remotes
-   */
-  useListenEvent('common.router.searchParams', ({ value = {} }) => {
-    setSearchParams(value);
-  });
-
   // Listen to navigation events dispatched inside app1 mfe.
   useListenEvent(`${remoteName}.router.update`, ({ value }) => {
     const { search, pathname } = value.location;
@@ -160,9 +144,10 @@ const useMountRemote = ({ remoteName, module, mountPointRef }) => {
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+  const [isLoadingModule, setIsLoadingModule] = useState(true);
 
   const remoteConfig = useMemo(() => remoteConfigs[remoteName], [remoteName]);
-  const { ready, isError, isLoading } = useDynamicScript(remoteConfig.url);
+  const { ready, isError, isLoading: isLoadingRemoteScript } = useDynamicScript(remoteConfig.url);
 
   const remoteRef = useRef();
 
@@ -175,27 +160,31 @@ const useMountRemote = ({ remoteName, module, mountPointRef }) => {
     }
 
     if (isError) {
+      setIsLoadingModule(false);
       mountPointRef.current.innerText = `Error loading remote module: "${module}"`;
     }
 
     if (ready && !remoteRef.current)
       (async () => {
-        const m = await loadModule(remoteConfig.scope, module);
-
-        const mount = m.default;
-        if (!mount) {
-          throw Error('Do not have mount function');
+        try {
+          const m = await loadModule(remoteConfig.scope, module);
+          const mount = m.default;
+          if (!mount) {
+            throw Error('Do not have mount function');
+          }
+          remoteRef.current = mount(mountPointRef.current, {
+            initialPathname: location.pathname.replace(remoteConfig.pathname, ''),
+            eventEmitter,
+            router: {
+              location,
+              searchParams,
+              setSearchParams,
+              navigate,
+            },
+          });
+        } finally {
+          setIsLoadingModule(false);
         }
-        remoteRef.current = mount(mountPointRef.current, {
-          initialPathname: location.pathname.replace(remoteConfig.pathname, ''),
-          eventEmitter,
-          router: {
-            location,
-            searchParams,
-            setSearchParams,
-            navigate,
-          },
-        });
       })();
   }, [
     isError,
@@ -223,7 +212,7 @@ const useMountRemote = ({ remoteName, module, mountPointRef }) => {
   }, [moduleKey]);
 
   return {
-    isLoading,
+    isLoading: isLoadingModule || isLoadingRemoteScript,
   };
 };
 
@@ -232,20 +221,30 @@ export const MountRemoteApp = ({ remoteName, module, loadingElement }) => {
   const { isLoading } = useMountRemote({ mountPointRef, module, remoteName });
   useSyncRoute({ remoteName });
 
-  if (isLoading && loadingElement) {
-    return <>{loadingElement}</>;
-  }
-
-  return <div ref={mountPointRef} className="remote-app-slot" />;
+  return (
+    <>
+      {isLoading && !!loadingElement && loadingElement}
+      <div
+        style={{ display: isLoading ? 'none' : 'block' }}
+        ref={mountPointRef}
+        className="remote-app-slot"
+      />
+    </>
+  );
 };
 
 export const MountRemoteComponent = ({ remoteName, module, loadingElement }) => {
   const mountPointRef = useRef(null);
   const { isLoading } = useMountRemote({ mountPointRef, module, remoteName });
 
-  if (isLoading && loadingElement) {
-    return <>{loadingElement}</>;
-  }
-
-  return <div ref={mountPointRef} className="remote-component-slot" />;
+  return (
+    <>
+      {isLoading && !!loadingElement && loadingElement}
+      <div
+        style={{ display: isLoading ? 'none' : 'block' }}
+        ref={mountPointRef}
+        className="remote-component-slot"
+      />
+    </>
+  );
 };

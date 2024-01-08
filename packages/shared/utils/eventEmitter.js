@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import { createContext, useCallback, useContext, useMemo } from 'react';
 
 import { useEffect, useRef } from 'react';
+import { v4 } from 'uuid';
 
 export const createEventEmitter = () => {
   const events = {};
@@ -25,6 +27,7 @@ export const createEventEmitter = () => {
 
     const handleInitialize = (event) => {
       if (!currentListener.initialized) {
+        console.log('initialization', key, eventName);
         currentListener.handler?.({
           lifecycleState: 'initialization',
           initialized: false,
@@ -48,6 +51,7 @@ export const createEventEmitter = () => {
     window.addEventListener(updateEventName, handleUpdate);
 
     if (!currentListener?.initialized && events[eventName]) {
+      console.log('Fire initialization event');
       window.dispatchEvent(
         new CustomEvent(initializationEventName, {
           detail: events[eventName].value,
@@ -56,7 +60,7 @@ export const createEventEmitter = () => {
     }
 
     console.log('Event Emitter - on - events', events);
-    console.log('Event Emitter - on - events', listeners);
+    console.log('Event Emitter - on - listeners', listeners);
 
     return (isRemoveListenerInstance) => {
       window.removeEventListener(initializationEventName, handleInitialize);
@@ -136,17 +140,17 @@ export const useEventEmitter = () => {
 };
 export const useListenEvent = (eventName, handler) => {
   const eventEmitter = useEventEmitter();
-  const key = useRef(Symbol());
+  const [key] = useState(v4());
   const savedUnbindFn = useRef();
 
   useEffect(() => {
     if (!eventEmitter.on) return;
-    savedUnbindFn.current = eventEmitter.on(eventName, key.current, handler);
+    savedUnbindFn.current = eventEmitter.on(eventName, key, handler);
 
     return () => {
       savedUnbindFn.current?.();
     };
-  }, [eventEmitter, eventName, handler]);
+  }, [eventEmitter, eventName, handler, key]);
 
   // Unmount
   useEffect(

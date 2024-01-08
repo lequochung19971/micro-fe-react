@@ -4,9 +4,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
 const webpack = require('webpack');
-const path = require('path');
 const dotenv = require('dotenv');
-const DotenvWebpack = require('dotenv-webpack');
 
 const envPath = process.env.NODE_ENV ? `.env.${process.env.NODE_ENV}` : '.env';
 dotenv.config({
@@ -97,13 +95,12 @@ module.exports = {
     }),
 
     new ModuleFederationPlugin({
-      name: 'cart',
+      name: 'auth',
       filename: 'remoteEntry.js',
       remotes: {},
       exposes: {
         './bootstrap': './src/bootstrap',
-        './ShoppingCart': './src/components/ShoppingCart',
-        './CartDrawer': './src/components/CartDrawer',
+        './LoginButton': './src/components/LoginButton',
       },
       shared: {
         ...rootDeps,

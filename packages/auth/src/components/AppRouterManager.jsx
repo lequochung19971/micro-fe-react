@@ -4,7 +4,7 @@ import { remoteNameConfig } from 'shared/configs';
 
 export function AppRouterManager({ children }) {
   return (
-    <RouterManager remoteName={remoteNameConfig.cart} routes={routes}>
+    <RouterManager remoteName={remoteNameConfig.auth} routes={routes}>
       {children}
     </RouterManager>
   );
