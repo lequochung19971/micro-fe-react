@@ -2,21 +2,22 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { createMountFunction } from '../utils/createMountFunction';
 import { Badge, IconButton } from '@mui/material';
 import { useEventEmitter, useListenEvent } from 'shared/utils/eventEmitter';
-import { useState } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import httpClient from 'shared/httpClient';
-import { getCurrentUser } from 'shared/getCurrentUser';
 import { queryClient } from './Providers';
+import { useCurrentUser } from 'shared/hooks/useCurrentUser';
 
 const ShoppingCart = () => {
   const emitter = useEventEmitter();
-  const [currentUser] = useState(() => getCurrentUser());
+  const [currentUser] = useCurrentUser();
+  console.log(currentUser);
 
   const { data: cartData } = useQuery({
-    queryKey: ['carts', { userId: currentUser.id }],
+    queryKey: ['carts', { userId: currentUser?.id }],
     queryFn: () => {
-      return httpClient.get(`/carts/user/${currentUser.id}`).then((res) => res.data?.carts?.[0]);
+      return httpClient.get(`/carts/user/${currentUser?.id}`).then((res) => res.data?.carts?.[0]);
     },
+    enabled: !!currentUser?.id,
   });
 
   const { mutate } = useMutation({
@@ -29,8 +30,8 @@ const ShoppingCart = () => {
       /**
        * update query or invalidate query
        */
-      // queryClient.invalidateQueries(['carts', { userId: currentUser.id }]);
-      queryClient.setQueryData(['carts', { userId: currentUser.id }], data);
+      // queryClient.invalidateQueries(['carts', { userId: currentUser?.id }]);
+      queryClient.setQueryData(['carts', { userId: currentUser?.id }], data);
     },
   });
 

@@ -1,92 +1,14 @@
-import {
-  Box,
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  CardMedia,
-  Drawer,
-  IconButton,
-  TextField,
-  Typography,
-  styled,
-  useTheme,
-} from '@mui/material';
+import { Box, Button, Drawer, IconButton, styled, useTheme } from '@mui/material';
 import { createMountFunction } from '../utils/createMountFunction';
 import { useEventEmitter, useListenEvent } from 'shared/utils/eventEmitter';
 import { useState } from 'react';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { usCurrency } from '../../../product/src/utils/usCurrency';
-import { getCurrentUser } from 'shared/getCurrentUser';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import httpClient from 'shared/httpClient';
-import DeleteIcon from '@mui/icons-material/Delete';
 import { queryClient } from './Providers';
-
-const Item = (props) => {
-  return (
-    <Card sx={{ display: 'flex', marginBottom: '20px' }}>
-      <CardMedia
-        component="img"
-        sx={{ minWidth: 150, height: 150 }}
-        image={props.thumbnail}
-        alt="product image"
-      />
-      <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
-        <CardContent sx={{ flex: '1 0 auto' }}>
-          <Typography
-            component="div"
-            variant="h5"
-            title={props.title}
-            sx={{
-              whiteSpace: 'nowrap',
-              textOverflow: 'ellipsis',
-              overflow: 'hidden',
-              width: '262px',
-            }}>
-            {props.title}
-          </Typography>
-          <Typography variant="subtitle2" component="div">
-            {usCurrency.format(props.price)}
-          </Typography>
-        </CardContent>
-        <CardActions
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            paddingX: '16px',
-            alignItems: 'center',
-          }}>
-          <Box>
-            <TextField
-              onChange={(e) =>
-                props?.onUpdate?.({
-                  id: props.id,
-                  quantity: e.target.value,
-                })
-              }
-              type="number"
-              value={props.quantity}
-              sx={{
-                width: '70px',
-              }}
-              size="small"></TextField>
-          </Box>
-          <IconButton
-            onClick={() =>
-              props?.onUpdate?.({
-                id: props.id,
-                quantity: 0,
-              })
-            }>
-            <DeleteIcon />
-          </IconButton>
-        </CardActions>
-      </Box>
-    </Card>
-  );
-};
+import { useCurrentUser } from 'shared/hooks/useCurrentUser';
+import CartProduct from './CartProduct';
 
 const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -101,14 +23,15 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 const CartDrawer = () => {
   const [open, setOpen] = useState(false);
   const theme = useTheme();
-  const [currentUser] = useState(() => getCurrentUser());
+  const [currentUser] = useCurrentUser();
   const eventEmitter = useEventEmitter();
 
   const { data: cartData } = useQuery({
-    queryKey: ['carts', { userId: currentUser.id }],
+    queryKey: ['carts', { userId: currentUser?.id }],
     queryFn: () => {
-      return httpClient.get(`/carts/user/${currentUser.id}`).then((res) => res.data?.carts?.[0]);
+      return httpClient.get(`/carts/user/${currentUser?.id}`).then((res) => res.data?.carts?.[0]);
     },
+    enabled: !!currentUser?.id,
   });
 
   const { mutate } = useMutation({
@@ -121,8 +44,8 @@ const CartDrawer = () => {
       /**
        * update query or invalidate query
        */
-      // queryClient.invalidateQueries(['carts', { userId: currentUser.id }]);
-      queryClient.setQueryData(['carts', { userId: currentUser.id }], data);
+      // queryClient.invalidateQueries(['carts', { userId: currentUser?.id }]);
+      queryClient.setQueryData(['carts', { userId: currentUser?.id }], data);
     },
   });
 
@@ -181,7 +104,7 @@ const CartDrawer = () => {
         {cartData?.products
           ?.filter((p) => p.quantity > 0)
           ?.map((p) => (
-            <Item key={p.id} {...p} onUpdate={updateCart} />
+            <CartProduct key={p.id} {...p} onUpdate={updateCart} />
           ))}
       </Box>
     </Drawer>

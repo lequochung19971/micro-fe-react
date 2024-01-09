@@ -2,28 +2,20 @@ import { Button } from '@mui/material';
 import { useEventEmitter, useListenEvent } from 'shared/utils/eventEmitter';
 import { createMountFunction } from '../utils/createMountFunction';
 import { useState } from 'react';
-import { getCurrentUser } from 'shared/getCurrentUser';
+import { useCurrentUser } from 'shared/hooks/useCurrentUser';
 
 export const SignButton = () => {
   const eventEmitter = useEventEmitter();
-  const [isSignedIn, setIsSignedIn] = useState(!!getCurrentUser());
+  const [currentUser, setCurrentUser] = useCurrentUser();
 
-  useListenEvent('storage', () => {
-    const currentUser = getCurrentUser();
-    if (currentUser) {
-      setIsSignedIn(true);
-    }
-  });
-
-  if (isSignedIn) {
+  if (currentUser) {
     return (
       <Button
         variant="outlined"
         color="secondary"
         sx={{ fontWeight: 'bold' }}
         onClick={() => {
-          localStorage.removeItem('currentUser');
-          setIsSignedIn(false);
+          setCurrentUser(undefined);
           eventEmitter.emit('common.router.navigate', {
             to: '/auth/sign-in',
           });

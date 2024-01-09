@@ -2,6 +2,7 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { AppRouterManager } from './components/AppRouterManager';
+import CartPage from './pages/CartPage';
 
 export const routes = [
   {
@@ -14,7 +15,7 @@ export const routes = [
     children: [
       {
         index: true,
-        element: <div>Carts Page Test</div>,
+        element: <CartPage />,
       },
       {
         path: ':id',

@@ -22,14 +22,14 @@ export const createEventEmitter = () => {
     }
     currentListener.handler = handler;
 
-    const initializationEventName = `${eventName}.initialization`;
+    const initializeEventName = `${eventName}.initialize`;
     const updateEventName = `${eventName}.update`;
 
     const handleInitialize = (event) => {
       if (!currentListener.initialized) {
-        console.log('initialization', key, eventName);
+        console.log('initialize', key, eventName);
         currentListener.handler?.({
-          lifecycleState: 'initialization',
+          lifecycleState: 'initialize',
           initialized: false,
           value: event.detail,
         });
@@ -37,7 +37,7 @@ export const createEventEmitter = () => {
 
       currentListener.initialized = true;
     };
-    window.addEventListener(initializationEventName, handleInitialize);
+    window.addEventListener(initializeEventName, handleInitialize);
 
     const handleUpdate = (event) => {
       if (currentListener.initialized) {
@@ -51,9 +51,9 @@ export const createEventEmitter = () => {
     window.addEventListener(updateEventName, handleUpdate);
 
     if (!currentListener?.initialized && events[eventName]) {
-      console.log('Fire initialization event');
+      console.log('Fire initialize event');
       window.dispatchEvent(
-        new CustomEvent(initializationEventName, {
+        new CustomEvent(initializeEventName, {
           detail: events[eventName].value,
         })
       );
@@ -63,7 +63,7 @@ export const createEventEmitter = () => {
     console.log('Event Emitter - on - listeners', listeners);
 
     return (isRemoveListenerInstance) => {
-      window.removeEventListener(initializationEventName, handleInitialize);
+      window.removeEventListener(initializeEventName, handleInitialize);
       window.removeEventListener(updateEventName, handleUpdate);
 
       if (isRemoveListenerInstance) {
@@ -85,12 +85,12 @@ export const createEventEmitter = () => {
 
     const isInitialized = listeners.some((l) => l.eventName === eventName && l.initialized);
 
-    const initializationEventName = `${eventName}.initialization`;
+    const initializeEventName = `${eventName}.initialize`;
     const updateEventName = `${eventName}.update`;
 
     if (!isInitialized) {
       window.dispatchEvent(
-        new CustomEvent(initializationEventName, {
+        new CustomEvent(initializeEventName, {
           detail: value,
         })
       );

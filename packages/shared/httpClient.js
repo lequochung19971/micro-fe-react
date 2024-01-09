@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getCurrentUser } from './getCurrentUser';
+import { getCurrentUser } from './hooks/useCurrentUser';
 const httpClient = axios.create({
   baseURL: 'https://dummyjson.com',
 });

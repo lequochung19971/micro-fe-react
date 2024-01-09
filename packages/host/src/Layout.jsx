@@ -1,14 +1,14 @@
 import { Outlet } from 'react-router-dom';
 import Header from './Header';
-import { Box, Drawer } from '@mui/material';
+import { Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useSearchParams } from 'react-router-dom';
 import { useListenEvent } from 'shared/utils/eventEmitter';
-import { getCurrentUser } from 'shared/getCurrentUser';
 import { MountRemoteComponent } from './components/MountRemote';
 import { remoteNameConfig } from 'shared/configs';
+import { useCurrentUser } from 'shared/hooks/useCurrentUser';
 
 const useParentRouteAction = () => {
   const navigate = useNavigate();
@@ -40,9 +40,9 @@ const useParentRouteAction = () => {
 const Layout = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [currentUser] = useCurrentUser();
 
   useEffect(() => {
-    const currentUser = getCurrentUser();
     if (!currentUser) {
       navigate('/auth/sign-in');
     } else {
@@ -50,7 +50,7 @@ const Layout = () => {
         navigate('/');
       }
     }
-  }, [location.pathname, navigate]);
+  }, [currentUser, location.pathname, navigate]);
 
   useParentRouteAction();
 

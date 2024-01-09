@@ -6,7 +6,7 @@ import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { useNavigate } from 'react-router-dom';
-import { usCurrency } from '../utils/usCurrency';
+import { usCurrency } from 'shared/utils/usCurrency';
 import { useEventEmitter } from 'shared/utils/eventEmitter';
 
 export default function ProductCard(props) {

@@ -11,6 +11,7 @@
   color-scheme: light dark;
   color: #242424;
   background-color: #ffffff;
+  box-sizing: border-box;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
