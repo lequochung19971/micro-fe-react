@@ -4,19 +4,51 @@ import { createContext, useCallback, useContext, useMemo } from 'react';
 import { useEffect, useRef } from 'react';
 import { v4 } from 'uuid';
 
+/**
+ * ### Description
+ * - This function will create a event emitter includes 3 functions (on, emit, and unbind)
+ * ### Methods:
+ * #### `on(eventName, listenerName, handler)`
+ * ##### Description
+ * - Will create listener instance and listen an event is published from `emit()` method.
+ * - There are some special features of this method.
+ *   - Have lifecycle (initialize, update)
+ *   - The listener is always trigger with initialize state if there is a event that the listener is listening in cube.
+ * It will handle for the case: the listener can not listen in time when an event is emitted before `on()` method is used.
+ *   - For example:
+ *     ```
+ * emit('event-a')
+ * on('event-a', 'listener-a', handler)
+ *     ```
+ *     In this case: `listener-a` still can get information from `event-a`
+ * ##### Lifecycle
+ * - initialize: for the first published event.
+ * - update: for the next published event.
+ *
+ * #### `emit(eventName, value)`
+ * ##### Description
+ * - Will publish a event with a particular value
+ *
+ * #### `unbind(isRemoveListenerInstance)`
+ * ##### Description
+ * - Will remove listener from window.removeEventListener
+ * - if `isRemoveListenerInstance`, it will also remove listener instance.
+ */
 export const createEventEmitter = () => {
   const events = {};
   let listeners = [];
 
-  const on = (eventName, key, handler) => {
-    let currentListener = listeners.find((l) => l.eventName === eventName && l.key === key);
+  const on = (eventName, listenerName, handler) => {
+    let currentListener = listeners.find(
+      (l) => l.eventName === eventName && l.name === listenerName
+    );
 
     if (!currentListener) {
       currentListener = {
         eventName,
         handler,
         initialized: false,
-        key,
+        name: listenerName,
       };
       listeners.push(currentListener);
     }
@@ -27,7 +59,6 @@ export const createEventEmitter = () => {
 
     const handleInitialize = (event) => {
       if (!currentListener.initialized) {
-        console.log('initialize', key, eventName);
         currentListener.handler?.({
           lifecycleState: 'initialize',
           initialized: false,
@@ -67,7 +98,7 @@ export const createEventEmitter = () => {
       window.removeEventListener(updateEventName, handleUpdate);
 
       if (isRemoveListenerInstance) {
-        listeners = listeners.filter((l) => l.key !== key);
+        listeners = listeners.filter((l) => l.name !== listenerName);
       }
     };
   };
