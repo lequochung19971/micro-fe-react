@@ -2,7 +2,7 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { AppRouterManager } from './components/AppRouterManager';
-import CartPage from './pages/CartPage';
+import Checkout from './pages/CheckoutPage';
 
 export const routes = [
   {
@@ -14,12 +14,8 @@ export const routes = [
     ),
     children: [
       {
-        index: true,
-        element: <CartPage />,
-      },
-      {
-        path: ':id',
-        element: <div>Cart Detail Page</div>,
+        path: 'checkout',
+        element: <Checkout />,
       },
     ],
   },

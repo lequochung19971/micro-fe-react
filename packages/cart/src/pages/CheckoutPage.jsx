@@ -13,7 +13,7 @@ import { useCurrentUser } from 'shared/hooks/useCurrentUser';
 import CartProduct from '../components/CartProduct';
 import { usCurrency } from 'shared/utils/usCurrency';
 
-const CartPage = () => {
+const Checkout = () => {
   const [currentUser] = useCurrentUser();
   const queryClient = useQueryClient();
 
@@ -110,4 +110,4 @@ const CartPage = () => {
   );
 };
 
-export default CartPage;
+export default Checkout;

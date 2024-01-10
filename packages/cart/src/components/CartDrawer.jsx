@@ -90,10 +90,10 @@ const CartDrawer = () => {
           onClick={() => {
             setOpen(false);
             eventEmitter.emit('common.router.navigate', {
-              to: '/carts',
+              to: '/carts/checkout',
             });
           }}>
-          Cart Page
+          Checkout
         </Button>
       </DrawerHeader>
       <Box
