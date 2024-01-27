@@ -1,9 +1,10 @@
 // eslint-disable-next-line no-unused-vars
-import React from 'react';
+import React, { lazy } from 'react';
 import { Outlet } from 'react-router-dom';
-import ProductsPage from './pages/ProductsPage';
-import ProductPage from './pages/ProductPage';
 import { AppRouterManager } from './components/AppRouterManager';
+
+const ProductsPage = lazy(() => import('./pages/ProductsPage'));
+const ProductPage = lazy(() => import('./pages/ProductPage'));
 
 export const routes = [
   {
@@ -16,11 +17,19 @@ export const routes = [
     children: [
       {
         index: true,
-        element: <ProductsPage />,
+        element: (
+          <React.Suspense>
+            <ProductsPage />
+          </React.Suspense>
+        ),
       },
       {
         path: ':id',
-        element: <ProductPage />,
+        element: (
+          <React.Suspense>
+            <ProductPage />
+          </React.Suspense>
+        ),
       },
     ],
   },

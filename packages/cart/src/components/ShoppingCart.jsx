@@ -1,14 +1,14 @@
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { createMountFunction } from '../utils/createMountFunction';
 import { Badge, IconButton } from '@mui/material';
-import { useEventEmitter, useListenEvent } from 'shared/utils/eventEmitter';
+import { useEventBus, useListenEvent } from 'shared/utils/eventBus';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import httpClient from 'shared/httpClient';
 import { queryClient } from './Providers';
 import { useCurrentUser } from 'shared/hooks/useCurrentUser';
 
 const ShoppingCart = () => {
-  const emitter = useEventEmitter();
+  const emitter = useEventBus();
   const [currentUser] = useCurrentUser();
   console.log(currentUser);
 

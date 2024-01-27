@@ -1,10 +1,10 @@
 import { Button, Card, Container, TextField, Typography } from '@mui/material';
 import httpClient from 'shared/httpClient';
-import { useEventEmitter } from 'shared/utils/eventEmitter';
+import { useEventBus } from 'shared/utils/eventBus';
 import { useMutation } from '@tanstack/react-query';
 import { useCurrentUser } from 'shared/hooks/useCurrentUser';
 export const SignInPage = () => {
-  const eventEmitter = useEventEmitter();
+  const eventBus = useEventBus();
   const [, setCurrentUser] = useCurrentUser();
 
   const { mutate, isPending } = useMutation({
@@ -16,7 +16,7 @@ export const SignInPage = () => {
     onSuccess: (data) => {
       setCurrentUser(data);
       // localStorage.setItem('currentUser', JSON.stringify(data));
-      eventEmitter.emit('common.router.navigate', {
+      eventBus.emit('common.router.navigate', {
         to: '/',
       });
     },

@@ -1,12 +1,12 @@
 import { useEffect, useMemo } from 'react';
 import { matchRoutes, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { remoteNameConfig } from '../configs/remoteNameConfig';
-import { useListenEvent, useEventEmitter } from '../utils/eventEmitter';
+import { useListenEvent, useEventBus } from '../utils/eventBus';
 
 export function RouterManager({ routes, children, remoteName }) {
   const location = useLocation();
   const navigate = useNavigate();
-  const eventEmitter = useEventEmitter();
+  const eventBus = useEventBus();
 
   const [searchParams, setSearchParams] = useSearchParams();
   const parsedSearchParams = useMemo(() => {
@@ -45,7 +45,7 @@ export function RouterManager({ routes, children, remoteName }) {
   });
 
   useEffect(() => {
-    eventEmitter.emit(`${remoteName}.router.update`, {
+    eventBus.emit(`${remoteName}.router.update`, {
       location: {
         pathname: location.pathname,
         search: location.search,
@@ -53,7 +53,7 @@ export function RouterManager({ routes, children, remoteName }) {
       },
       searchParams: parsedSearchParams,
     });
-  }, [eventEmitter, location, parsedSearchParams, remoteName]);
+  }, [eventBus, location, parsedSearchParams, remoteName]);
 
   return children;
 }

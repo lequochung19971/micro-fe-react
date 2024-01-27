@@ -1,6 +1,6 @@
 import { Box, Button, Drawer, IconButton, styled, useTheme } from '@mui/material';
 import { createMountFunction } from '../utils/createMountFunction';
-import { useEventEmitter, useListenEvent } from 'shared/utils/eventEmitter';
+import { useEventBus, useListenEvent } from 'shared/utils/eventBus';
 import { useState } from 'react';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -24,7 +24,7 @@ const CartDrawer = () => {
   const [open, setOpen] = useState(false);
   const theme = useTheme();
   const [currentUser] = useCurrentUser();
-  const eventEmitter = useEventEmitter();
+  const eventBus = useEventBus();
 
   const { data: cartData } = useQuery({
     queryKey: ['carts', { userId: currentUser?.id }],
@@ -89,7 +89,7 @@ const CartDrawer = () => {
           }}
           onClick={() => {
             setOpen(false);
-            eventEmitter.emit('common.router.navigate', {
+            eventBus.emit('common.router.navigate', {
               to: '/carts/checkout',
             });
           }}>

@@ -6,13 +6,14 @@ import { RouterProvider } from 'react-router-dom';
 import { Suspense, lazy } from 'react';
 import { ThemeProvider } from '@mui/material';
 import { theme } from 'shared/styles';
-import { EventEmitterContext, createEventEmitter } from 'shared/utils/eventEmitter';
+import { EventBusContext, createEventEmitter } from 'shared/utils/eventBus';
+import { createEventBus } from 'nano-event-bus-ts';
 
 const ProductApp = lazy(() => import('./components/ProductApp'));
 const CartApp = lazy(() => import('./components/CartApp'));
 const AuthApp = lazy(() => import('./components/AuthApp'));
 
-export const eventEmitter = createEventEmitter();
+export const eventBus = createEventBus();
 
 const router = createBrowserRouter([
   {
@@ -64,11 +65,11 @@ export const navigations = [
 
 function App() {
   return (
-    <EventEmitterContext.Provider value={eventEmitter}>
+    <EventBusContext.Provider value={eventBus}>
       <ThemeProvider theme={theme}>
         <RouterProvider router={router} />
       </ThemeProvider>
-    </EventEmitterContext.Provider>
+    </EventBusContext.Provider>
   );
 }
 

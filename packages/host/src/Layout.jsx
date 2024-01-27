@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useSearchParams } from 'react-router-dom';
-import { useListenEvent } from 'shared/utils/eventEmitter';
+import { useListenEvent } from 'shared/utils/eventBus';
 import { MountRemoteComponent } from './components/MountRemote';
 import { remoteNameConfig } from 'shared/configs';
 import { useCurrentUser } from 'shared/hooks/useCurrentUser';
@@ -22,7 +22,7 @@ const useParentRouteAction = () => {
       const { to, options } = value;
       navigate(to, options);
     },
-    'navigate'
+    true
   );
 
   /**
@@ -33,7 +33,7 @@ const useParentRouteAction = () => {
     ({ value = {} }) => {
       setSearchParams(value);
     },
-    'searchParams'
+    true
   );
 };
 

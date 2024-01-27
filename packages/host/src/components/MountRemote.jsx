@@ -3,8 +3,8 @@ import { useSearchParams } from 'react-router-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { remoteConfigs } from '../remoteConfigs';
-import { eventEmitter } from '../App';
-import { useListenEvent, useEventEmitter } from 'shared/utils/eventEmitter';
+import { eventBus } from '../App';
+import { useListenEvent, useEventBus } from 'shared/utils/eventBus';
 
 const loadModule = async (scope, module) => {
   // Initializes the share scope. This fills it with known provided modules from this build and all remotes
@@ -79,7 +79,7 @@ const useSyncRoute = ({ remoteName }) => {
   const { pathname: remoteBasePathname } = remoteConfig;
 
   const hostConfig = useMemo(() => remoteConfigs.host, []);
-  const eventEmitter = useEventEmitter();
+  const eventBus = useEventBus();
 
   const parsedSearchParams = useMemo(() => {
     return Object.fromEntries([...searchParams]);
@@ -121,7 +121,7 @@ const useSyncRoute = ({ remoteName }) => {
   useEffect(() => {
     if (!location.pathname.startsWith(remoteBasePathname)) return;
 
-    eventEmitter.emit(`${hostConfig.name}.router.update`, {
+    eventBus.emit(`${hostConfig.name}.router.update`, {
       location: {
         pathname: location.pathname.replace(remoteBasePathname, ''),
         state: location.state,
@@ -130,7 +130,7 @@ const useSyncRoute = ({ remoteName }) => {
       searchParams: parsedSearchParams,
     });
   }, [
-    eventEmitter,
+    eventBus,
     hostConfig.name,
     location.pathname,
     location.search,
@@ -174,7 +174,7 @@ const useMountRemote = ({ remoteName, module, mountPointRef }) => {
           }
           remoteRef.current = mount(mountPointRef.current, {
             initialPathname: location.pathname.replace(remoteConfig.pathname, ''),
-            eventEmitter,
+            eventBus,
             router: {
               location,
               searchParams,

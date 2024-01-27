@@ -7,11 +7,11 @@ import { createRouter } from 'shared/utils/createRouter';
 import { HostInfoContext } from 'shared/components';
 import App from './App';
 import { remoteNameConfig } from 'shared/configs';
-import { EventEmitterContext } from 'shared/utils/eventEmitter';
+import { EventBusContext } from 'shared/utils/eventBus';
 
 const mount = (
   element,
-  { initialPathname, routingStrategy, router: hostRouterInfo = {}, eventEmitter }
+  { initialPathname, routingStrategy, router: hostRouterInfo = {}, eventBus }
 ) => {
   console.log(`${remoteNameConfig.product} mounting`);
   const router = createRouter({ routes, strategy: routingStrategy, initialPathname });
@@ -23,9 +23,9 @@ const mount = (
         value={{
           router: hostRouterInfo,
         }}>
-        <EventEmitterContext.Provider value={eventEmitter}>
+        <EventBusContext.Provider value={eventBus}>
           <App router={router} />
-        </EventEmitterContext.Provider>
+        </EventBusContext.Provider>
       </HostInfoContext.Provider>
     </React.StrictMode>
   );

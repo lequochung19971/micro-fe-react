@@ -1,11 +1,10 @@
 import { Button } from '@mui/material';
-import { useEventEmitter, useListenEvent } from 'shared/utils/eventEmitter';
+import { useEventBus } from 'shared/utils/eventBus';
 import { createMountFunction } from '../utils/createMountFunction';
-import { useState } from 'react';
 import { useCurrentUser } from 'shared/hooks/useCurrentUser';
 
 export const SignButton = () => {
-  const eventEmitter = useEventEmitter();
+  const eventBus = useEventBus();
   const [currentUser, setCurrentUser] = useCurrentUser();
 
   if (currentUser) {
@@ -16,7 +15,7 @@ export const SignButton = () => {
         sx={{ fontWeight: 'bold' }}
         onClick={() => {
           setCurrentUser(undefined);
-          eventEmitter.emit('common.router.navigate', {
+          eventBus.emit('common.router.navigate', {
             to: '/auth/sign-in',
           });
         }}>
@@ -31,7 +30,7 @@ export const SignButton = () => {
       color="secondary"
       sx={{ fontWeight: 'bold' }}
       onClick={() => {
-        eventEmitter.emit('common.router.navigate', {
+        eventBus.emit('common.router.navigate', {
           to: '/auth/sign-in',
         });
       }}>

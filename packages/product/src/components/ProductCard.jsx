@@ -7,11 +7,11 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { useNavigate } from 'react-router-dom';
 import { usCurrency } from 'shared/utils/usCurrency';
-import { useEventEmitter } from 'shared/utils/eventEmitter';
+import { useEventBus } from 'shared/utils/eventBus';
 
 export default function ProductCard(props) {
   const navigate = useNavigate();
-  const eventEmitter = useEventEmitter();
+  const eventBus = useEventBus();
 
   return (
     <Card sx={{ width: 350 }}>
@@ -27,7 +27,10 @@ export default function ProductCard(props) {
             textOverflow: 'ellipsis',
             overflow: 'hidden',
           }}
-          onClick={() => navigate(props.id)}>
+          onClick={() => {
+            navigate(props.id.toString());
+            console.log(props.id);
+          }}>
           {props.title}
         </Typography>
         <Typography gutterBottom variant="subtitle2" component="div" sx={{}}>
@@ -43,7 +46,7 @@ export default function ProductCard(props) {
           size="small"
           variant="contained"
           onClick={() => {
-            eventEmitter.emit('product.add-cart', {
+            eventBus.emit('product.add-cart', {
               id: props.id,
               quantity: 1,
             });
