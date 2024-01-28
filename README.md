@@ -47,7 +47,7 @@ Overcoming difficulties in event listening between remote and host apps due to t
 **Example Scenario**: Consider the scenario where the host loads first, and subsequent Products remote apps load later.
 The host immediately triggers an event `host.router.update` meant for a Product app that is still in the loading process,
 the Product app may fail to capture the event.
-![event listening flow](image.png)
+![event listening flow](/document/image.png)
 **Solution**: To mitigate this, a mechanism has been developed to store emitted events and re-emit them once the remote app successfully loads. At this time, Product app still get information of event `host.router.update` from host app at `initialized` lifecycle state, and continue to handle next step.
 The library supports this mechanism: [nano-event-bus-ts](https://github.com/lequochung19971/nano-event-bus-ts)
 
