@@ -56,7 +56,7 @@ The library supports this mechanism: [nano-event-bus-ts](https://github.com/lequ
 - **Webpack Module Federation**: Apply dynamic loading of Micro Frontend apps during runtime, focusing primarily on Client-Side Rendering.
 - **ReactJS**: Chosen as the primary framework for its versatility and robustness.
 - **Horizontal-Split Architectures**: Adopted to achieve a decoupled and scalable frontend architecture. (_Read more in Luca Mezzalira's "Build Micro Frontends" book_)
-- **Communication**: Build a event emitter inherit from event listener of window (`window.addEventListener, window.removeEventListener`).
+- **Communication**: [nano-event-bus-ts](https://github.com/lequochung19971/nano-event-bus-ts).
 
 ## How to start project
 
